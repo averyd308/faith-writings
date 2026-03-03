@@ -140,15 +140,24 @@ async function renderWriting() {
       ${renderedContent}
     </div>`;
 
-  // Load Utterances comments after the writing is known, using the slug
-  // as the issue term — clean alphanumeric string, no special characters
+  // Load Giscus comments after the writing is known, using the slug
+  // as the specific discussion term so each writing has its own thread
   const commentsWidget = document.getElementById('comments-widget');
   if (commentsWidget) {
     const s = document.createElement('script');
-    s.src = 'https://utteranc.es/client.js';
-    s.setAttribute('repo', 'averyd308/faith-writings');
-    s.setAttribute('issue-term', writing.slug);
-    s.setAttribute('theme', 'github-light');
+    s.src = 'https://giscus.app/client.js';
+    s.setAttribute('data-repo', 'averyd308/faith-writings');
+    s.setAttribute('data-repo-id', 'R_kgDORdfs0Q');
+    s.setAttribute('data-category', 'General');
+    s.setAttribute('data-category-id', 'DIC_kwDORdfs0c4C3nJ7');
+    s.setAttribute('data-mapping', 'specific');
+    s.setAttribute('data-term', writing.slug);
+    s.setAttribute('data-strict', '0');
+    s.setAttribute('data-reactions-enabled', '1');
+    s.setAttribute('data-emit-metadata', '0');
+    s.setAttribute('data-input-position', 'bottom');
+    s.setAttribute('data-theme', 'preferred_color_scheme');
+    s.setAttribute('data-lang', 'en');
     s.setAttribute('crossorigin', 'anonymous');
     s.async = true;
     commentsWidget.appendChild(s);
