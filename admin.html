@@ -16,7 +16,7 @@
       <rect x="0" y="14" width="38" height="8" rx="2" fill="rgba(212,176,96,0.85)"/>
     </svg>
     <h1 class="site-title"><a href="index.html">In His Word</a></h1>
-    <p class="site-subtitle">Admin — Publish a New Writing</p>
+    <p class="site-subtitle">Admin Panel</p>
   </header>
 
   <nav>
@@ -27,19 +27,19 @@
   <main>
     <div class="admin-wrap">
 
-      <!-- GitHub Settings -->
+      <!-- ① GitHub Settings ───────────────────────────── -->
       <div class="admin-box" id="settings-box">
         <h2>GitHub Settings</h2>
         <p class="subtitle">
-          Your Personal Access Token authenticates uploads. It is stored only in your browser's
-          local storage and never sent anywhere except the GitHub API.
+          Your Personal Access Token authenticates all changes. It is stored only in your
+          browser's local storage and never sent anywhere except the GitHub API.
         </p>
 
         <div class="form-group">
           <label for="pat">GitHub Personal Access Token</label>
           <input type="password" id="pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
           <p class="field-hint">
-            Create one at GitHub → Settings → Developer Settings → Personal Access Tokens → Fine-grained tokens.
+            GitHub → Settings → Developer Settings → Personal Access Tokens → Fine-grained tokens.
             Grant <strong>Contents: Read &amp; Write</strong> on your repository.
           </p>
         </div>
@@ -59,10 +59,28 @@
         <div class="status-msg" id="verify-status"></div>
       </div>
 
-      <!-- New Writing Form -->
+      <!-- ② Edit an Existing Writing ────────────────────── -->
       <div class="admin-box">
-        <h2>Publish a New Writing</h2>
+        <h2>Edit an Existing Writing</h2>
         <p class="subtitle">
+          Load your writings, then click one to open it in the editor below.
+        </p>
+
+        <button class="btn btn-sm" id="load-writings-btn" type="button">Load Writings</button>
+        <div class="status-msg" id="edit-load-status"></div>
+
+        <div class="edit-list" id="edit-list">
+          <!-- Populated by admin.js -->
+        </div>
+      </div>
+
+      <!-- ③ New / Edit Writing Form ──────────────────────── -->
+      <div class="admin-box">
+        <h2 id="form-mode-label">
+          Publish a New Writing
+          <span class="mode-badge editing" id="edit-badge" style="display:none;">Editing</span>
+        </h2>
+        <p class="subtitle" id="form-subtitle">
           Fill in the fields below. Content uses Markdown — use <code>&gt;</code> for scripture
           blockquotes, <code>**bold**</code>, <code>*italic*</code>, etc.
         </p>
@@ -106,8 +124,9 @@
             <label for="content">Writing Content (Markdown) *</label>
             <textarea id="content" placeholder="Your writing here...&#10;&#10;Use > for scripture quotes:&#10;&gt; &quot;...&quot; — Book X:Y&#10;&#10;Use **bold** for emphasis and *italic* for key words." required></textarea>
             <p class="field-hint">
-              Scripture quotes: start a line with <code>&gt;</code> &nbsp;|&nbsp;
-              Bold: <code>**text**</code> &nbsp;|&nbsp; Italic: <code>*text*</code>
+              Scripture quotes: <code>&gt;</code> &nbsp;|&nbsp;
+              Bold: <code>**text**</code> &nbsp;|&nbsp;
+              Italic: <code>*text*</code>
             </p>
           </div>
 
@@ -119,12 +138,13 @@
             </div>
           </div>
 
-          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:0.5rem;">
-            <button type="submit" class="btn" id="submit-btn">
-              ✦ Publish Writing
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem;">
+            <button type="submit" class="btn" id="submit-btn">✦ Publish Writing</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="cancel-edit-btn" style="display:none;">
+              Cancel Edit
             </button>
             <span style="font-size:0.85rem;color:var(--text-light);font-style:italic;">
-              This will commit to your GitHub repo and go live within ~30 seconds.
+              Changes go live on the site within ~30 seconds.
             </span>
           </div>
 
@@ -133,7 +153,7 @@
         </form>
       </div>
 
-      <!-- Quick Markdown Reference -->
+      <!-- ④ Markdown Reference ────────────────────────────── -->
       <div class="admin-box" style="font-size:0.9rem;color:var(--text-mid);">
         <h2 style="font-size:1.1rem;margin-bottom:0.75rem;">Markdown Quick Reference</h2>
         <table style="border-collapse:collapse;width:100%;">

@@ -63,8 +63,8 @@ async function renderIndex() {
     return;
   }
 
-  // Chronological order (oldest first — like a devotional book)
-  writings.sort((a, b) => a.dateISO.localeCompare(b.dateISO));
+  // Reverse chronological order (newest first)
+  writings.sort((a, b) => b.dateISO.localeCompare(a.dateISO));
 
   container.innerHTML = writings.map(w => {
     const excerpt = escHtml(getExcerpt(w.content));
