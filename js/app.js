@@ -146,7 +146,7 @@ async function renderWriting() {
   if (commentsWidget) {
     const s = document.createElement('script');
     s.src = 'https://utteranc.es/client.js';
-    s.setAttribute('repo', 'averyd308/faith_writings');
+    s.setAttribute('repo', 'averyd308/faith-writings');
     s.setAttribute('issue-term', writing.slug);
     s.setAttribute('theme', 'github-light');
     s.setAttribute('crossorigin', 'anonymous');
