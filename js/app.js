@@ -139,6 +139,20 @@ async function renderWriting() {
     <div class="writing-content">
       ${renderedContent}
     </div>`;
+
+  // Load Utterances comments after the writing is known, using the slug
+  // as the issue term — clean alphanumeric string, no special characters
+  const commentsWidget = document.getElementById('comments-widget');
+  if (commentsWidget) {
+    const s = document.createElement('script');
+    s.src = 'https://utteranc.es/client.js';
+    s.setAttribute('repo', 'averyd308/faith_writings');
+    s.setAttribute('issue-term', writing.slug);
+    s.setAttribute('theme', 'github-light');
+    s.setAttribute('crossorigin', 'anonymous');
+    s.async = true;
+    commentsWidget.appendChild(s);
+  }
 }
 
 /* ── Init ─────────────────────────────────────────────── */
