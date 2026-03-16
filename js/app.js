@@ -51,35 +51,82 @@ async function loadWritings() {
 
 /* ── Index Page ───────────────────────────────────────── */
 
+const PAGE_SIZE = 5;
+let allWritings = [];
+let currentPage = 0;
+let lastRenderedMonth = null;
+
+function getMonthLabel(dateISO) {
+  const [year, month] = dateISO.split('-');
+  return new Date(year, parseInt(month) - 1, 1)
+    .toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function buildCardHTML(w) {
+  const excerpt = escHtml(getExcerpt(w.content));
+  const month   = getMonthLabel(w.dateISO);
+  let html = '';
+
+  if (month !== lastRenderedMonth) {
+    html += `<div class="month-header"><span>${month}</span></div>`;
+    lastRenderedMonth = month;
+  }
+
+  html += `
+    <a href="writing.html?slug=${encodeURIComponent(w.slug)}" class="writing-card">
+      <div class="card-date">${escHtml(w.date)}</div>
+      <h3 class="card-title">${escHtml(w.title)}</h3>
+      <div class="card-scripture">
+        <span>${escHtml(w.scriptureText)}</span>
+        <span style="white-space:nowrap;color:var(--text-light);font-size:0.875rem;">— ${escHtml(w.scriptureRef)}</span>
+      </div>
+      <p class="card-excerpt">${excerpt}</p>
+      <span class="read-more">Read More →</span>
+    </a>`;
+  return html;
+}
+
+function renderNextPage() {
+  const container = document.getElementById('writings-container');
+  const btn       = document.getElementById('load-more-btn');
+  const start     = currentPage * PAGE_SIZE;
+  const batch     = allWritings.slice(start, start + PAGE_SIZE);
+
+  container.insertAdjacentHTML('beforeend', batch.map(buildCardHTML).join(''));
+  currentPage++;
+
+  if (currentPage * PAGE_SIZE >= allWritings.length) {
+    if (btn) btn.remove();
+  }
+}
+
 async function renderIndex() {
   const container = document.getElementById('writings-container');
   if (!container) return;
 
-  const writings = await loadWritings();
+  allWritings = await loadWritings();
 
-  if (!writings.length) {
+  if (!allWritings.length) {
     container.innerHTML =
       '<p style="text-align:center;color:var(--text-light);font-style:italic;padding:2rem 0;">No writings yet — check back soon.</p>';
     return;
   }
 
-  // Reverse chronological order (newest first)
-  writings.sort((a, b) => b.dateISO.localeCompare(a.dateISO));
+  allWritings.sort((a, b) => b.dateISO.localeCompare(a.dateISO));
+  container.innerHTML = '';
+  currentPage = 0;
+  lastRenderedMonth = null;
 
-  container.innerHTML = writings.map(w => {
-    const excerpt = escHtml(getExcerpt(w.content));
-    return `
-      <a href="writing.html?slug=${encodeURIComponent(w.slug)}" class="writing-card">
-        <div class="card-date">${escHtml(w.date)}</div>
-        <h3 class="card-title">${escHtml(w.title)}</h3>
-        <div class="card-scripture">
-          <span>${escHtml(w.scriptureText)}</span>
-          <span style="white-space:nowrap;color:var(--text-light);font-size:0.875rem;">— ${escHtml(w.scriptureRef)}</span>
-        </div>
-        <p class="card-excerpt">${excerpt}</p>
-        <span class="read-more">Read More →</span>
-      </a>`;
-  }).join('');
+  renderNextPage();
+
+  if (allWritings.length > PAGE_SIZE) {
+    const btn = document.createElement('button');
+    btn.id        = 'load-more-btn';
+    btn.className = 'load-more-btn';
+    btn.textContent = 'Load More';
+    btn.addEventListener('click', renderNextPage);
+    container.insertAdjacentElement('afterend', btn);
+  }
 }
 
 /* ── Writing Page ─────────────────────────────────────── */
